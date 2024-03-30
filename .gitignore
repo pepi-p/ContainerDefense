@@ -10,6 +10,12 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+/Assets/Materials/
+/Assets/Images/
+/Assets/Fbx/
+/Assets/CruiseMissile/
+/Assets/Audio/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -46,6 +52,11 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+
+# Add
+*.png
+*.tga
+*.fbx
 
 # Unity3D generated meta files
 *.pidb.meta
