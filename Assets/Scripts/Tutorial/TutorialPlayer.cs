@@ -59,9 +59,9 @@ public class TutorialPlayer : MonoBehaviour
     public float rotationY;
     public float HP = 1;
 
-    // scripts
     private TutorialPlayerAnimation tutorialPlayerAnimation;
-    void Start()
+    
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         tutorialPlayerAnimation = character.GetComponent<TutorialPlayerAnimation>();
@@ -75,8 +75,7 @@ public class TutorialPlayer : MonoBehaviour
         rotationY = -118.56f;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(!shotAble) ammo = maxAmmo;
 
@@ -213,7 +212,9 @@ public class TutorialPlayer : MonoBehaviour
         playerHPbar.rectTransform.localPosition = new Vector3(-250 + ((HP * 500 * 0.5f)), 0, 0);
         playerHPbar.rectTransform.sizeDelta = new Vector2(500 * HP, 20);
     }
-    private void Shot() {
+    
+    private void Shot()
+    {
         ammo--;
         audioSourceMuzzle.PlayOneShot(shotSE);
         syoujuns[0].rectTransform.localPosition = new Vector2(0, 45);
@@ -244,7 +245,9 @@ public class TutorialPlayer : MonoBehaviour
         Instantiate(MuzzleFlash, Muzzle.transform.position, Quaternion.LookRotation(this.transform.forward), Muzzle.transform);
         recoil = 2.5f;
     }
-    IEnumerator Reload() {
+    
+    private IEnumerator Reload() 
+    {
         reload = true;
         animator.Play("reload", 2);
         if(Input.GetMouseButton(1)) {

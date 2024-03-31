@@ -7,8 +7,8 @@ public class bullet : MonoBehaviour
     [SerializeField] private float speed;
     private Rigidbody rb;
     private Vector3 startPoint;
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Start()
     {
         var parent = this.transform.parent.gameObject;
         this.transform.parent = null;
@@ -18,12 +18,13 @@ public class bullet : MonoBehaviour
         startPoint = this.transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(Vector3.Distance(startPoint, this.transform.position) > 50) Destroy(this.gameObject);
     }
-    void OnCollisionEnter(Collision other) {
+    
+    private void OnCollisionEnter(Collision other)
+    {
         Destroy(this.gameObject);
     }
 }

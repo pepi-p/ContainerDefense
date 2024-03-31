@@ -11,8 +11,7 @@ public class BlendModeUtils : MonoBehaviour
         Fade,
         Transparent,
     }
-
-
+    
     public static void SetBlendMode(Material material, Mode blendMode)
     {
         material.SetFloat("_Mode", (float)blendMode); 

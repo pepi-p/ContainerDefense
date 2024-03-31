@@ -36,24 +36,24 @@ public class manager : MonoBehaviour
     private bool openMenu = false;
 
     [Header("Result")]
-    [SerializeField] Animator resultAnimator;
-    [SerializeField] Image resultImg, resultBackGround;
-    [SerializeField] Sprite win, lose;
-    [SerializeField] Text killText;
-    [SerializeField] Text containerCountText;
-    [SerializeField] Text clearTimeText;
-    [SerializeField] Text killTextHighScore;
-    [SerializeField] Text containerCountTextHighScore;
-    [SerializeField] Text clearTimeTextHighScore;
-    [SerializeField] GameObject resultMatrix;
-    [SerializeField] GameObject allSuccessTxt, noDamageTxt;
-    [SerializeField] GameObject sippai_title_text;
+    [SerializeField] private Animator resultAnimator;
+    [SerializeField] private Image resultImg, resultBackGround;
+    [SerializeField] private Sprite win, lose;
+    [SerializeField] private Text killText;
+    [SerializeField] private Text containerCountText;
+    [SerializeField] private Text clearTimeText;
+    [SerializeField] private Text killTextHighScore;
+    [SerializeField] private Text containerCountTextHighScore;
+    [SerializeField] private Text clearTimeTextHighScore;
+    [SerializeField] private GameObject resultMatrix;
+    [SerializeField] private GameObject allSuccessTxt, noDamageTxt;
+    [SerializeField] private GameObject sippai_title_text;
     private int killCountHighScore;
     private int headShotCountHighScore;
     private Vector2 containerCountHighScore;
     private float clearTimeHighScore;
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Start()
     {        
         Application.targetFrameRate = 120;
         Cursor.visible = false;
@@ -78,8 +78,7 @@ public class manager : MonoBehaviour
         angleSpeedText.text = PlayerMove.angleSpeed.ToString("F1");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(!stop) {
             if(Input.GetKey(KeyCode.T)) killCount++;
@@ -109,11 +108,15 @@ public class manager : MonoBehaviour
             }
         }
     }
-    public void ReturnTitle() {
+    
+    public void ReturnTitle()
+    {
         Time.timeScale = 1;
         SceneManager.LoadScene("Title");
     }
-    public void ContainerDestory(int id) {
+    
+    public void ContainerDestory(int id)
+    {
         containerEnable[id] = false;
         /*foreach(Generater generater in generaters) {
             generater.SetDestination(containerEnable);
@@ -127,12 +130,16 @@ public class manager : MonoBehaviour
         }
         containerDestroy = destroy;
     }
-    private int containerEnableCount() {
+    
+    private int containerEnableCount()
+    {
         int result = 0;
         for(int i = 0; i < containerCount; i++) if(containerEnable[i]) result++;
         return result;
     }
-    private int GetHP() {
+    
+    private int GetHP()
+    {
         float result = 0;
         for(int i = 0; i < containerCount; i++) {
             result += Mathf.Clamp01(containers[i].GetComponent<Container>().HP);
@@ -140,7 +147,9 @@ public class manager : MonoBehaviour
         result /= containerCount;
         return (int)(result * 100);
     }
-    private IEnumerator end(int result) {
+    
+    private IEnumerator end(int result)
+    {
         stop = true;
         resultBackGround.rectTransform.sizeDelta = new Vector2(1920, 720);
         float flame = 1 / Time.deltaTime;
@@ -196,7 +205,9 @@ public class manager : MonoBehaviour
         }
         ReturnTitle();
     }
-    private void GetHighScore() {
+    
+    private void GetHighScore()
+    {
         killCountHighScore = PlayerPrefs.GetInt("killCount" + mode.ToString() + level, 0);
         headShotCountHighScore = PlayerPrefs.GetInt("headShotCount" + mode.ToString() + level, 0);
         containerCountHighScore = new Vector2(PlayerPrefs.GetInt("containerCount" + mode.ToString() + level, 0), PlayerPrefs.GetInt("containerHP" + mode.ToString() + level, 0));

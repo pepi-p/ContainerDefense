@@ -29,8 +29,8 @@ public class Select : MonoBehaviour
     private int mode = 0;
     private int selectLevel = 0;
     private bool endless = false;
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
         PhaseChange(0);
         custom.SetActive(false);
@@ -38,8 +38,7 @@ public class Select : MonoBehaviour
         foreach(GameObject rule in rules) rule.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(phase == -1) {
             for(int i = 0; i < customSliders.Length; i++){
@@ -61,7 +60,9 @@ public class Select : MonoBehaviour
         }
         else endlessobj.SetActive(false);
     }
-    private void PhaseChange(int num) {
+    
+    private void PhaseChange(int num)
+    {
         phase = num;
         for(int i = 0; i < phases.Length; i++) {
             phases[i].SetActive(i == num);
@@ -71,7 +72,9 @@ public class Select : MonoBehaviour
         }
         if(phase == 2 && mode == 0) endlessEnable();
     }
-    private void SetLevel(int level) {
+    
+    private void SetLevel(int level)
+    {
         int container = 1; // コンテナの数
         int spawner = 1; // スポナーの数
         int maxEnemy = 50; // 倒さなければいけない敵の数 ( mode = 0 限定 )
@@ -156,7 +159,9 @@ public class Select : MonoBehaviour
         manager.mode = mode;
         SceneManager.LoadScene("MainGame");
     }
-    private int GetRule(string name) {
+    
+    private int GetRule(string name)
+    {
         int result = 0;
         switch(name) {
             case "Button":
@@ -171,30 +176,44 @@ public class Select : MonoBehaviour
         }
         return result;
     }
-    public void OnClickStart() {
+    
+    public void OnClickStart()
+    {
         PhaseChange(1);
     }
-    public void OnClickLevel(int num) {
+    
+    public void OnClickLevel(int num)
+    {
         SetLevel(num);
     }
-    public void OnClickMode(int num) {
+    
+    public void OnClickMode(int num)
+    {
         mode = num;
         PhaseChange(2);
     }
-    public void RuleDisplay(int num) {
+    
+    public void RuleDisplay(int num)
+    {
         for(int i = 0; i < rules.Length; i++) {
             rules[i].SetActive(i == num);
         }
     }
-    public void PhaseReturn() {
+    
+    public void PhaseReturn()
+    {
         phase--;
         PhaseChange(phase);
     }
-    public void Custom() {
+    
+    public void Custom()
+    {
         PhaseChange(-1);
         custom.SetActive(true);
     }
-    public void CustomStart() {
+    
+    public void CustomStart()
+    {
         mode = Mathf.RoundToInt(customSliders[6].value);
         manager.containerCount = Mathf.RoundToInt(customSliders[0].value);
         manager.spawnerCount = Mathf.RoundToInt(customSliders[1].value);
@@ -207,20 +226,30 @@ public class Select : MonoBehaviour
         manager.level = -1;
         SceneManager.LoadScene("MainGame");
     }
-    public void ReturnCustom() {
+    
+    public void ReturnCustom()
+    {
         PhaseChange(1);
         custom.SetActive(false);
     }
-    public void Exit() {
+    
+    public void Exit()
+    {
         Application.Quit();
     }
-    public void PlaySelectSE() {
+    
+    public void PlaySelectSE()
+    {
         audioSource.PlayOneShot(selectSE);
     }
-    public void PlayEnterSE() {
+    
+    public void PlayEnterSE()
+    {
         audioSource.PlayOneShot(enterSE);
     }
-    public void UpdateInfo(int level) {
+    
+    public void UpdateInfo(int level)
+    {
         endlessmessege.SetActive(level == 6);
         selectLevel = level;
         levelText.text = level.ToString();
@@ -310,6 +339,7 @@ public class Select : MonoBehaviour
         else if(mode == 1) levelInfo.text = container + "\n" + spawner + "\n" + (int)(timelimit / 60) + ":" + ((int)timelimit % 60).ToString("D2") + "\n" + interval.ToString("f1") + "\n" + (enemyAttack * 100).ToString("f1");
         highScore.text = "\n" + killCountString + "\n" + containerCountString + "\n" + clearTimeString + "\n\n";
     }
+    
     public void HighScoreReset() {
         PlayerPrefs.SetInt("killCount" + mode.ToString() + selectLevel, 0);
         PlayerPrefs.SetInt("headShotCount" + mode.ToString() + selectLevel, 0);
@@ -318,6 +348,7 @@ public class Select : MonoBehaviour
         PlayerPrefs.SetFloat("clearTime" + mode.ToString() + selectLevel, selectLevel != 6 ? 1000 : 0);
         UpdateInfo(selectLevel);
     }
+    
     private void endlessEnable() {
         bool _endless = true;
         for(int i = 1; i <= 5; i++) {

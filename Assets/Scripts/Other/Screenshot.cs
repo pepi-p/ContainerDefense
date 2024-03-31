@@ -8,16 +8,16 @@ public class Screenshot : MonoBehaviour
 {
 
     [Header("保存先の設定")]
-    [SerializeField]
-    string folderName = "Screenshots";
+    [SerializeField] private string folderName = "Screenshots";
 
-    bool isCreatingScreenShot = false;
-    string path;
+    private bool isCreatingScreenShot = false;
+    private string path;
 
     void Start()
     {
         path = Application.dataPath + "/" + folderName + "/";
     }
+    
     void Update() {
         if(Input.GetKeyDown(KeyCode.P)) PrintScreen();
     }
@@ -53,5 +53,4 @@ public class Screenshot : MonoBehaviour
 
         isCreatingScreenShot = false;
     }
-
 }

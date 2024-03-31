@@ -5,20 +5,20 @@ using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour
 {
-    [SerializeField] TutorialGenerater tutorialGenerater;
-    [SerializeField] TutorialPlayer tutorialPlayer;
-    [SerializeField] TutorialContainer tutorialContainer;
-    [SerializeField] GameObject GUI, PlayerUI;
-    [SerializeField] GameObject player;
-    [SerializeField] GameObject directionalLight;
+    [SerializeField] private TutorialGenerater tutorialGenerater;
+    [SerializeField] private TutorialPlayer tutorialPlayer;
+    [SerializeField] private TutorialContainer tutorialContainer;
+    [SerializeField] private GameObject GUI, PlayerUI;
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject directionalLight;
     [Header("UI")]
-    [SerializeField] GameObject HPbar;
-    [SerializeField] GameObject playerHPbar;
-    [SerializeField] GameObject guns;
-    [SerializeField] GameObject menu;
+    [SerializeField] private GameObject HPbar;
+    [SerializeField] private GameObject playerHPbar;
+    [SerializeField] private GameObject guns;
+    [SerializeField] private GameObject menu;
     [Header("tutorial")]
-    [SerializeField] GameObject[] tutorials;
-    [SerializeField] Text jissya;
+    [SerializeField] private GameObject[] tutorials;
+    [SerializeField] private Text jissya;
     private int tutorialNumber = 0;
     public bool stop = true;
     public int killCount = 0;
@@ -28,8 +28,8 @@ public class TutorialManager : MonoBehaviour
     private Quaternion beforePlayerTransformRotation;
     private Vector3 beforeCameraTransformPosition;
     private Quaternion beforeCameraTransformRotation;
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
         Application.targetFrameRate = 120;
         Cursor.visible = true;
@@ -42,9 +42,8 @@ public class TutorialManager : MonoBehaviour
         beforeCameraTransformPosition = Camera.main.transform.position;
         beforeCameraTransformRotation = Camera.main.transform.rotation;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    private void Update()
     {
         if(!stop && Input.GetKeyDown(KeyCode.Escape)){
             openMenu = !openMenu;
@@ -61,7 +60,9 @@ public class TutorialManager : MonoBehaviour
             }
         }
     }
-    public void ReturnTitle() {
+    
+    public void ReturnTitle()
+    {
         menu.SetActive(false);
         openMenu = false;
         Time.timeScale = 1;
@@ -79,15 +80,21 @@ public class TutorialManager : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
-    public void StartTutorialClick() {
+    
+    public void StartTutorialClick()
+    {
         StartCoroutine("StartTutorial");
     }
-    private void TutorialDisplay(int num) {
+    
+    private void TutorialDisplay(int num)
+    {
         for(int i = 0; i < tutorials.Length; i++) {
             tutorials[i].SetActive(i == num);
         }
     }
-    IEnumerator StartTutorial() {
+    
+    private IEnumerator StartTutorial() 
+    {
         // setup
         GUI.SetActive(false);
         HPbar.SetActive(false);

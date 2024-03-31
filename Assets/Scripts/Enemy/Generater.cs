@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Generater : MonoBehaviour
 {
-    [SerializeField] manager _manager;
+    [SerializeField] private manager _manager;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject[] containers;
     [SerializeField] private EnemyController enemyPrefab;
@@ -13,8 +13,8 @@ public class Generater : MonoBehaviour
     private float coolTime;
     private int mode, maxEnemies;
     public Vector3 destination;
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Start()
     {
         Invoke("SetDestination", 0.1f);
         interval = manager.spawnInterval;
@@ -23,8 +23,7 @@ public class Generater : MonoBehaviour
         maxEnemies = manager.maxEnemies;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(_manager.stop) {
             var childCount = this.transform.childCount;
@@ -39,7 +38,9 @@ public class Generater : MonoBehaviour
         }
         coolTime += Time.deltaTime;
     }
-    private void Setup() {
+    
+    private void Setup()
+    {
         int element = 0;
         float distance = 1000;
         for(int i = 0; i < containers.Length; i++) {
@@ -53,7 +54,9 @@ public class Generater : MonoBehaviour
         }
         destination = containers[element].transform.position;
     }
-    public void Spawn() {
+    
+    public void Spawn()
+    {
         SetDestination();
         var enemy = Instantiate(enemyPrefab, this.transform.position, Quaternion.identity, this.transform);
         enemy.SetPlayerPosition(player);
@@ -61,7 +64,9 @@ public class Generater : MonoBehaviour
         manager.enemyCount++;
         manager.spawnCount++;
     }
-    public void SetDestination() {
+    
+    public void SetDestination()
+    {
         Vector2 min = new Vector2(0, 1000);
         var _containerCount = containerCount();
         var _playerDistance = playerDistance();
@@ -78,7 +83,9 @@ public class Generater : MonoBehaviour
         destination = containers[(int)min.x].transform.position;
         DebugLog = (int)min.x;
     }
-    private int playerDistance() {
+    
+    private int playerDistance()
+    {
         var distance = 100f;
         int num = 0;
         for(int i = 0; i < manager.containerCount; i++) {
@@ -90,7 +97,9 @@ public class Generater : MonoBehaviour
         }
         return num;
     }
-    private int containerCount() {
+    
+    private int containerCount()
+    {
         var result = 0;
         for(int i = 0; i < manager.containerCount; i++) {
             if(_manager.containerEnable[i]) result++;

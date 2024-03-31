@@ -57,9 +57,9 @@ public class PlayerMove : MonoBehaviour
     public bool reloaded = false;
     public float HP = 1;
 
-    // scripts
     private PlayerAnimation playerAnimation;
-    void Start()
+    
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         playerAnimation = character.GetComponent<PlayerAnimation>();
@@ -72,8 +72,7 @@ public class PlayerMove : MonoBehaviour
         HP= 1;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var horizontal = !_maneger.stop ? Input.GetAxis("Horizontal") : 0;
         var vertical = !_maneger.stop ? Input.GetAxis("Vertical") : 0;
@@ -210,7 +209,9 @@ public class PlayerMove : MonoBehaviour
 
         //if(Input.GetKey(KeyCode.))
     }
-    private void Shot() {
+    
+    private void Shot()
+    {
         ammo--;
         audioSourceMuzzle.PlayOneShot(shotSE);
         syoujuns[0].rectTransform.localPosition = new Vector2(0, 45);
@@ -243,7 +244,9 @@ public class PlayerMove : MonoBehaviour
         Instantiate(MuzzleFlash, Muzzle.transform.position, Quaternion.LookRotation(this.transform.forward), Muzzle.transform);
         recoil = 2.5f;
     }
-    IEnumerator Reload() {
+    
+    private IEnumerator Reload()
+    {
         reload = true;
         animator.Play("reload", 2);
         if(Input.GetMouseButton(1)) {

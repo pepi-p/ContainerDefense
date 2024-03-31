@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TutorialGenerater : MonoBehaviour
 {
-    [SerializeField] TutorialManager tutorialManager;
+    [SerializeField] private TutorialManager tutorialManager;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject container;
     [SerializeField] private TutorialEnemy enemyPrefab;
@@ -13,16 +13,15 @@ public class TutorialGenerater : MonoBehaviour
     private int mode;
     public Vector3 destination;
     public bool generate = false;
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Start()
     {
         destination = container.transform.position;
         coolTime = interval - 1;
         mode = 0;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(tutorialManager.stop) {
             var childCount = this.transform.childCount;
@@ -39,7 +38,9 @@ public class TutorialGenerater : MonoBehaviour
             coolTime += Time.deltaTime;
         }
     }
-    public void Spawn() {
+    
+    public void Spawn()
+    {
         var enemy = Instantiate(enemyPrefab, this.transform.position, Quaternion.identity, this.transform);
         enemy.SetPlayerPosition(player);
         enemy.SetContainerPosition(destination);
