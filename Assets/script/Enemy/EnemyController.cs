@@ -1,0 +1,166 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class EnemyController : MonoBehaviour
+{
+    [SerializeField] private Animator animator;
+    [SerializeField] private EnemyAnimation enemyAnimation;
+
+    private NavMeshAgent agent;
+    private CapsuleCollider capsuleCollider;
+
+    [SerializeField] private GameObject Muzzle;
+    [SerializeField] private GameObject Bullet;
+    [SerializeField] private GameObject MuzzleFlash;
+    [SerializeField] private AudioSource audioSource, audioSource2;
+    [SerializeField] private AudioClip shotSE;
+
+    private Transform player;
+    private Vector3 containerPosition = Vector3.zero;
+    private Vector3 goal;
+    private Vector3 deltaPos;
+
+    private RaycastHit rayhit;
+    private float coolDown = 0;
+    private int HP = 4;
+    private float attack = 0.01f;
+
+    public bool stop;
+    public float speed;
+    public bool isPlayer, isContainer;
+    // Start is called before the first frame update
+    void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        deltaPos = this.transform.position;
+        speed = Random.Range(5.0f, 7.0f);
+        agent.speed = speed;
+        attack = manager.enemyAttack;
+        audioSource.pitch = Random.Range(0.5f, 0.6f);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // 停止
+        if(stop) {
+            if(agent.updatePosition) {
+                agent.updatePosition = false;
+                agent.updateRotation = false;
+                agent.updateUpAxis = false;
+                animator.SetFloat("speed", 0);
+            }
+            return;
+        }
+
+        // プレイヤー検知
+        var playerDistance = Vector3.Distance(new Vector3(player.position.x, 0, player.position.z), new Vector3(this.transform.position.x, 0, this.transform.position.z));
+        isPlayer = playerDistance < 2 && Mathf.Abs(player.position.y - this.transform.position.y) < 0.1f;
+        if(Vector2.Angle(new Vector2(this.transform.forward.x, this.transform.forward.z), new Vector2(player.position.x - this.transform.position.x, player.position.z - this.transform.position.z)) > 90) isPlayer = false;
+
+        // ray
+        Ray ray;
+        if(isPlayer) ray = new Ray(this.transform.position + Vector3.up * 1.6f, (player.position + Vector3.up * 1.6f) - (this.transform.position + Vector3.up * 1.6f));
+        else ray = new Ray(this.transform.position + Vector3.up * 1.6f, containerPosition - (this.transform.position + Vector3.up * 1.6f)); 
+        Physics.Raycast(ray, out rayhit, 100);
+        if(rayhit.collider.CompareTag("Untagged")) {
+            this.transform.parent.GetComponent<Generater>().SetDestination();
+            containerPosition = this.transform.parent.GetComponent<Generater>().destination;
+            this.transform.rotation = Quaternion.LookRotation(new Vector3(containerPosition.x - this.transform.position.x, 0, containerPosition.z - this.transform.position.z));
+        }
+
+        // move
+        var velocity = (deltaPos - this.transform.position).magnitude / Time.deltaTime;
+        deltaPos = this.transform.position;
+        var distance = Vector3.Distance(this.transform.position, containerPosition);
+        isContainer = distance < 4.1f;// && Mathf.Abs(this.transform.position.y - containerPosition.y) < 2f);
+        if(isPlayer) goal = this.transform.position;
+        else if(distance > 4) goal = containerPosition;
+        else goal = this.transform.position;
+        //if(distance < 10 && rayhit.collider.CompareTag("container")) agent.speed = Mathf.Lerp(3, 6, (distance - 5) / 5);
+        agent.speed = Mathf.Lerp(agent.speed, speed, Time.deltaTime);
+        animator.SetFloat("speed", velocity > 2 ? 1 : velocity / 2);
+        agent.SetDestination(goal);
+        //if(distance > 5.1f) animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0, 2 * Time.deltaTime));
+        
+        // shot
+        if(isPlayer && !isContainer) {
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(player.position - this.transform.position), 10 * Time.deltaTime);
+            if(rayhit.collider.CompareTag("Player")) {
+                animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1, 20 * Time.deltaTime));
+                if(animator.GetLayerWeight(1) > 0.9f) {
+                    if(Time.time - coolDown > 2) {
+                        StartCoroutine("Shot3");
+                        coolDown = Time.time;
+                    }
+                }
+            }
+        }
+        if(isContainer) {
+            if(rayhit.collider.CompareTag("container")) {
+                animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1, 20 * Time.deltaTime));
+                if(this.gameObject.layer == 13) this.gameObject.layer = 0;
+                if(animator.GetLayerWeight(1) > 0.9f) {
+                    this.transform.rotation = Quaternion.LookRotation(new Vector3(containerPosition.x - this.transform.position.x, 0, containerPosition.z - this.transform.position.z));
+                    if(Time.time - coolDown > 2) {
+                        StartCoroutine("Shot3");
+                        coolDown = Time.time;
+                    }
+                }
+            }
+        }
+        if(!(isPlayer || isContainer)) animator.SetLayerWeight(1, 0);
+    }
+    private IEnumerator Shot3() {
+        var cooltime = Time.time;
+        Shot();
+        while(true) {
+            if(Time.time - cooltime > 0.0824f * 1.5f) {
+                Shot();
+                break;
+            }
+            yield return null;
+        }
+        while(true) {
+            if(Time.time - cooltime > 0.0824f * 2f * 1.5f) {
+                Shot();
+                break;
+            }
+            yield return null;
+        }
+    }
+    private void Shot() {
+        audioSource.PlayOneShot(shotSE);
+        if(rayhit.collider.CompareTag("container")) rayhit.collider.GetComponent<Container>().HP -= attack;
+        if(rayhit.collider.CompareTag("Player")) player.GetComponent<PlayerMove>().HP -= 0.01f;
+        Instantiate(Bullet, Muzzle.transform.position, Quaternion.LookRotation(this.transform.forward));
+        Instantiate(MuzzleFlash, Muzzle.transform.position, Quaternion.LookRotation(this.transform.forward), Muzzle.transform);
+        enemyAnimation.recoil = 5;
+    }
+    public void Hit(Vector3 hitPoint) {
+        HP--;
+        if(hitPoint.y - this.transform.position.y > 1.5f) HP = 0;
+        if(HP <= 0) {
+            stop = true;
+            capsuleCollider.enabled = false;
+            animator.SetLayerWeight(1, 0);
+            animator.Play("down", 0);
+            agent.updatePosition = false;
+            agent.updateRotation = false;
+        }
+        else {
+            agent.speed /= 2;
+            //animator.SetLayerWeight(1, 1 - animator.GetLayerWeight(1) * 0.5f);
+            animator.Play("hit", 2);
+        }
+    }
+    public void SetPlayerPosition(Transform transform) {
+        player = transform;
+    }
+    public void SetContainerPosition(Vector3 position) {
+        containerPosition = position;
+    }
+}
